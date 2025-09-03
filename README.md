@@ -1,4 +1,4 @@
-# Trade Eligibility — Phase 0.2 (Feast + Redis)
+# Trade Eligibility — Phase 1.2 (Feast + Redis)
 
 ## Quick start (fresh)
 
