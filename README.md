@@ -4,7 +4,7 @@
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
 [![Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen.svg)]()
 
-> **Finance-flavored, latency-critical trading system** that streams market data and makes trade/no-trade decisions under strict P99 latency budgets with safe fallbacks and shadow/canary rollouts.
+> **Latency-critical trading system** that streams market data and makes trade/no-trade decisions under strict P99 latency budgets with safe fallbacks and shadow/canary rollouts.
 
 ## 📖 Overview
 
