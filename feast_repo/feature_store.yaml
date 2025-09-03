@@ -1,0 +1,12 @@
+project: trade_eligibility
+registry: data/registry.db
+provider: local
+
+online_store:
+  type: redis
+  # ✅ Feast expects "host:port,db=IDX,password=SECRET"
+  connection_string: "redis:6379,db=0,password=redispassword"
+
+offline_store:
+  type: file
+entity_key_serialization_version: 2
