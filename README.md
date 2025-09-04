@@ -1,4 +1,4 @@
-# Trade Eligibility — Phase 0.3
+# Trade Eligibility — Phase 1.3
 
 ## What’s in this phase
 
