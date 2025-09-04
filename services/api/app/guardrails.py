@@ -1,5 +1,4 @@
 from typing import List
-
 CONF_THRESH = 0.62
 Z_MAX = 3.5
 

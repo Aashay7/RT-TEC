@@ -1,0 +1,68 @@
+{
+  "title": "Trade Eligibility \u2014 API & Triton",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "E2E Latency (ms)",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(e2e_latency_ms_bucket[5m])) by (le))"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests by status",
+      "targets": [
+        {
+          "expr": "sum(rate(requests_total[5m])) by (status)"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Fallback counts",
+      "targets": [
+        {
+          "expr": "sum(rate(fallback_total[5m])) by (reason)"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Triton Inference Count",
+      "targets": [
+        {
+          "expr": "sum(rate(nv_inference_request_success[5m]))"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      }
+    }
+  ],
+  "uid": "te-api-triton",
+  "schemaVersion": 38,
+  "version": 1
+}

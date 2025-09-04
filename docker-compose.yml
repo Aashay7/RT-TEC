@@ -7,7 +7,7 @@ services:
     env_file:
       - .env
     environment:
-      - REDIS_URL=redis://:${REDIS_PASSWORD:-redissecret}@redis:6379/0
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-redispassword}@redis:6379/0
       - TRITON_URL=http://triton:8000
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
       - FEAST_REPO=/app/feast_repo
@@ -16,6 +16,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:-te_audit}
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
+      - SCHEMA_SQL_PATH=/app/sql/create_audit_schema.sql
     volumes:
       - ./:/app
       - ./feast_repo:/app/feast_repo
@@ -56,7 +57,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: te_redis
-    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-redissecret}"]
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-redispassword}"]
     ports:
       - "6379:6379"
 
@@ -71,29 +72,6 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-  redpanda:
-    image: docker.redpanda.com/redpandadata/redpanda:v23.3.10
-    container_name: te_redpanda
-    command:
-      - redpanda start --overprovisioned --smp 1 --memory 1G --reserve-memory 0M --node-id 0 --kafka-addr PLAINTEXT://0.0.0.0:9092 --advertise-kafka-addr PLAINTEXT://redpanda:9092
-    ports:
-      - "9092:9092"
-    volumes:
-      - redpanda:/var/lib/redpanda/data
-
-  minio:
-    image: quay.io/minio/minio:RELEASE.2024-06-13T22-53-53Z
-    container_name: te_minio
-    environment:
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-minio}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minio12345}
-    command: ["server", "/data", "--console-address", ":9001"]
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - minio:/data
 
   prometheus:
     image: prom/prometheus:v2.53.0
@@ -124,5 +102,52 @@ services:
 
 volumes:
   pgdata:
+
   redpanda:
-  minio:
+    image: redpandadata/redpanda:v23.3.12
+    container_name: te_redpanda
+    command:
+      - redpanda start
+      - --overprovisioned
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --node-id 0
+      - --check=false
+      - --kafka-addr 0.0.0.0:9092
+      - --advertise-kafka-addr redpanda:9092
+    ports:
+      - "9092:9092"
+      - "9644:9644"
+
+  redpanda-console:
+    image: redpandadata/console:latest
+    container_name: te_redpanda_console
+    environment:
+      - KAFKA_BROKERS=redpanda:9092
+    ports:
+      - "8081:8080"
+    depends_on:
+      - redpanda
+
+  ingest:
+    build:
+      context: ./services/ingest
+      dockerfile: Dockerfile
+    container_name: te_ingest
+    environment:
+      - KAFKA_BROKERS=redpanda:9092
+      - KAFKA_TOPIC=ticks
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-redispassword}@redis:6379/0
+      - SPREAD_TTL_SEC=180
+    depends_on:
+      - redpanda
+      - redis
+
+  pytools:
+    image: python:3.11-slim
+    container_name: te_pytools
+    working_dir: /app
+    volumes:
+      - ./:/app
+    entrypoint: ["bash","-lc","python -V && tail -f /dev/null"]

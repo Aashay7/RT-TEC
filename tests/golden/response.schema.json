@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": [
+    "decision",
+    "conf",
+    "corr_id",
+    "reason"
+  ],
+  "properties": {
+    "decision": {
+      "type": "string",
+      "enum": [
+        "TRADE",
+        "NO_TRADE",
+        "ABSTAIN"
+      ]
+    },
+    "conf": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "corr_id": {
+      "type": "string"
+    },
+    "latency_ms": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "reason": {
+      "type": "string"
+    }
+  }
+}

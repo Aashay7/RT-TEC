@@ -1,5 +1,4 @@
 CREATE SCHEMA IF NOT EXISTS audit;
-
 CREATE TABLE IF NOT EXISTS audit.decisions (
   id BIGSERIAL PRIMARY KEY,
   ts timestamptz NOT NULL DEFAULT now(),
