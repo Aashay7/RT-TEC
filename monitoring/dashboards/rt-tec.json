@@ -1,0 +1,56 @@
+{
+  "title": "RT-TEC – Realtime Scoring",
+  "editable": true,
+  "timezone": "browser",
+  "tags": ["rt-tec"],
+  "panels": [
+    {
+      "type": "stat",
+      "title": "API Up",
+      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "up{job=\"api\"}" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "API Requests by decision (1m rate)",
+      "gridPos": { "x": 4, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "sum by (decision) (rate(reqs_total{job=\"api\"}[1m]))" }
+      ],
+      "renderer": "flot"
+    },
+    {
+      "type": "timeseries",
+      "title": "API E2E Latency p95 (ms)",
+      "gridPos": { "x": 0, "y": 8, "w": 16, "h": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(your_e2e_hist_bucket{job=\"api\"}[1m])) by (le))"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Triton Inference RPS",
+      "gridPos": { "x": 0, "y": 16, "w": 8, "h": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(nv_inference_request_success{model=\"trade_eligibility\"}[1m]))"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Triton Compute Infer Avg (ms)",
+      "gridPos": { "x": 8, "y": 16, "w": 8, "h": 8 },
+      "targets": [
+        {
+          "expr": "(rate(nv_inference_compute_infer_duration_us_sum[1m]) / rate(nv_inference_compute_infer_duration_us_count[1m])) / 1000"
+        }
+      ]
+    }
+  ],
+  "time": { "from": "now-15m", "to": "now" },
+  "schemaVersion": 38,
+  "version": 1
+}

@@ -1,4 +1,4 @@
-# Trade Eligibility — Phase 0.3
+# Trade Eligibility — Phase 1.3
 
 ## What’s in this phase
 
@@ -31,7 +31,7 @@ curl -s "http://localhost:8080/debug/triton?n=8"
 curl -s -X POST http://localhost:8080/v1/score -H 'Content-Type: application/json'   -d '{"symbol":"BTC","ts_ns":1,"features":[0.1,0.2,0.0,0.3,0.1,0.0,0.2,0.1],"freshness_ms":10}'
 ```
 
-## Phase 0.4 — Streaming & Canary
+## Phase 1.4 — Streaming & Canary
 
 ### New services
 

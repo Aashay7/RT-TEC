@@ -1,11 +1,16 @@
 name: "trade_eligibility"
 platform: "onnxruntime_onnx"
 max_batch_size: 32
+
 input [
   { name: "input" data_type: TYPE_FP32 dims: [ 8 ] }
 ]
 output [
   { name: "prob" data_type: TYPE_FP32 dims: [ 2 ] }
 ]
+
+# Serve both versions explicitly
+version_policy: { specific { versions: [ 1, 2 ] } }
+
 instance_group [ { kind: KIND_CPU count: 1 } ]
 response_cache { enable: false }

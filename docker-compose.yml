@@ -17,6 +17,7 @@ services:
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
       - SCHEMA_SQL_PATH=/app/sql/create_audit_schema.sql
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
     volumes:
       - ./:/app
       - ./feast_repo:/app/feast_repo
@@ -31,6 +32,7 @@ services:
       interval: 10s
       timeout: 3s
       retries: 5
+    
 
   triton:
     image: nvcr.io/nvidia/tritonserver:24.04-py3
@@ -82,14 +84,19 @@ services:
       - "9090:9090"
 
   grafana:
-    image: grafana/grafana:10.4.3
     container_name: te_grafana
+    image: grafana/grafana:10.4.3
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin12345}
+      GF_SECURITY_ADMIN_PASSWORD: grafana123
     ports:
       - "3000:3000"
     depends_on:
       - prometheus
+    volumes:
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/dashboards:/var/lib/grafana/dashboards
+
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.98.0
@@ -99,10 +106,7 @@ services:
       - ./monitoring/otel-collector.yml:/etc/otel-collector.yml:ro
     ports:
       - "4317:4317"
-
-volumes:
-  pgdata:
-
+  
   redpanda:
     image: redpandadata/redpanda:v23.3.12
     container_name: te_redpanda
@@ -151,3 +155,6 @@ volumes:
     volumes:
       - ./:/app
     entrypoint: ["bash","-lc","python -V && tail -f /dev/null"]
+
+volumes:
+  pgdata:
