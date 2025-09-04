@@ -1,12 +1,14 @@
 # Trade Eligibility — Phase 0.3
 
 ## What’s in this phase
+
 - Feast online feature (Redis) with dev TTL.
 - `/debug/features` and `/debug/triton` endpoints.
 - Prometheus + example Grafana dashboard.
 - Golden test scaffolding and k6 smoke.
 
 ## Quick start
+
 ```bash
 # Build API image (Feast + deps)
 docker compose build --no-cache api
@@ -32,17 +34,20 @@ curl -s -X POST http://localhost:8080/v1/score -H 'Content-Type: application/jso
 ## Phase 0.4 — Streaming & Canary
 
 ### New services
+
 - **redpanda** (Kafka-compatible broker) + **redpanda-console** at http://localhost:8081
 - **ingest** consumer: reads `ticks` topic and writes `te:spread_bps:{symbol}` to Redis (TTL env `SPREAD_TTL_SEC`).
 - **pytools** helper container.
 
 ### API updates
+
 - **Streaming fallback**: if Feast has no feature, API reads `te:spread_bps:{symbol}` from Redis.
 - **Canary inference**: enable with `CANARY_ENABLED=true` (defaults to version `2`). Metrics:
   - `canary_abs_delta` histogram
   - `canary_disagree_total` counter
 
 ### Try it
+
 ```bash
 # build & start new services
 docker compose build ingest
@@ -72,6 +77,7 @@ curl -s "http://localhost:8080/debug/features?symbol=BTC" | jq
 ```
 
 ### Notes
+
 - Redis key format for streaming is simple: `te:spread_bps:{SYMBOL}`. TTL is `SPREAD_TTL_SEC` (default 180s).
 - Redpanda auto-creates the `ticks` topic on first publish.
 - Grafana dashboard (Phase 0.3) will also chart canary metrics if you add them.
