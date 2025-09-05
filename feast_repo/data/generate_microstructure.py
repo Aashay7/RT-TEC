@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
+from random import random
 import pandas as pd
 
 OUT_DIR = Path(__file__).resolve().parent
@@ -13,11 +14,10 @@ for i in range(20):
         "symbol": "BTC",
         "event_timestamp": now - timedelta(seconds=i % 3),
         "created": now,
-        "spread_bps": 2.0
+        "spread_bps": random.random()*10.0,
     })
 
 OUT_DIR.mkdir(parents=True, exist_ok=True)
-import pandas as pd
 df = pd.DataFrame(rows)
 df["event_timestamp"] = pd.to_datetime(df["event_timestamp"], utc=True)
 df["created"] = pd.to_datetime(df["created"], utc=True)

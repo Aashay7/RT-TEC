@@ -14,7 +14,7 @@ try:
     i = 0
     while True:
         # vary spread a bit
-        spread = 3.5 + random.random()*4.0
+        spread = 3.5 + random.random() * 4.0
         msg = {"symbol": "BTC", "spread_bps": round(
             spread, 3), "ts": int(time.time()*1000)}
         p.send(TOPIC, msg)
