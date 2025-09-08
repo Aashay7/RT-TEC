@@ -1,6 +1,10 @@
-# Trade Eligibility — Phase 1.3
+# Real Time - Trade Eligibility Classifier
 
-## What’s in this phase
+RT-TEC is a real-time trading decision system that uses machine learning models to determine trade eligibility in sub-10ms latency.
+
+**Tech Stack:** Python 3.11 • FastAPI • NVIDIA Triton • Feast • Redis • PostgreSQL • RedPanda • Prometheus • Grafana • Docker
+
+## Trade Eligibility Classifier — Phase 1.3
 
 - Feast online feature (Redis) with dev TTL.
 - `/debug/features` and `/debug/triton` endpoints.
@@ -31,22 +35,7 @@ curl -s "http://localhost:8080/debug/triton?n=8"
 curl -s -X POST http://localhost:8080/v1/score -H 'Content-Type: application/json'   -d '{"symbol":"BTC","ts_ns":1,"features":[0.1,0.2,0.0,0.3,0.1,0.0,0.2,0.1],"freshness_ms":10}'
 ```
 
-## Phase 1.4 — Streaming & Canary
-
-### New services
-
-- **redpanda** (Kafka-compatible broker) + **redpanda-console** at http://localhost:8081
-- **ingest** consumer: reads `ticks` topic and writes `te:spread_bps:{symbol}` to Redis (TTL env `SPREAD_TTL_SEC`).
-- **pytools** helper container.
-
-### API updates
-
-- **Streaming fallback**: if Feast has no feature, API reads `te:spread_bps:{symbol}` from Redis.
-- **Canary inference**: enable with `CANARY_ENABLED=true` (defaults to version `2`). Metrics:
-  - `canary_abs_delta` histogram
-  - `canary_disagree_total` counter
-
-### Try it
+### Steps:
 
 ```bash
 # build & start new services
@@ -80,4 +69,4 @@ curl -s "http://localhost:8080/debug/features?symbol=BTC" | jq
 
 - Redis key format for streaming is simple: `te:spread_bps:{SYMBOL}`. TTL is `SPREAD_TTL_SEC` (default 180s).
 - Redpanda auto-creates the `ticks` topic on first publish.
-- Grafana dashboard (Phase 0.3) will also chart canary metrics if you add them.
+- Grafana dashboard (Phase 1.3) will also chart canary metrics if you add them.
