@@ -4,7 +4,7 @@ RT-TEC is a real-time trading decision system that uses machine learning models 
 
 **Tech Stack:** Python 3.11 • FastAPI • NVIDIA Triton • Feast • Redis • PostgreSQL • RedPanda • Prometheus • Grafana • Docker
 
-## Trade Eligibility Classifier — Phase 1.3
+## Trade Eligibility Classifier — v1.3
 
 - Feast online feature (Redis) with dev TTL.
 - `/debug/features` and `/debug/triton` endpoints.
@@ -69,4 +69,4 @@ curl -s "http://localhost:8080/debug/features?symbol=BTC" | jq
 
 - Redis key format for streaming is simple: `te:spread_bps:{SYMBOL}`. TTL is `SPREAD_TTL_SEC` (default 180s).
 - Redpanda auto-creates the `ticks` topic on first publish.
-- Grafana dashboard (Phase 1.3) will also chart canary metrics if you add them.
+- Grafana dashboard (v1.3) will also chart canary metrics if you add them.
