@@ -1,0 +1,10 @@
+groups:
+- name: rt-tec
+  rules:
+  - alert: HighAbstainRate
+    expr: sum(rate(rt_tec_requests_total{decision="abstain"}[5m])) 
+          / sum(rate(rt_tec_requests_total[5m])) > 0.5
+    for: 5m
+    labels: {severity: 'warning'}
+    annotations:
+      summary: "High abstain rate (>50% over 5m)"

@@ -32,7 +32,6 @@ services:
       interval: 10s
       timeout: 3s
       retries: 5
-    
 
   triton:
     image: nvcr.io/nvidia/tritonserver:24.04-py3
@@ -46,7 +45,7 @@ services:
         "--repository-poll-secs=5",
         "--http-port=8000",
         "--grpc-port=8001",
-        "--metrics-port=8002"
+        "--metrics-port=8002",
       ]
     restart: unless-stopped
     volumes:
@@ -59,7 +58,14 @@ services:
   redis:
     image: redis:7-alpine
     container_name: te_redis
-    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-redispassword}"]
+    command:
+      [
+        "redis-server",
+        "--appendonly",
+        "yes",
+        "--requirepass",
+        "${REDIS_PASSWORD:-redispassword}",
+      ]
     ports:
       - "6379:6379"
 
@@ -80,6 +86,7 @@ services:
     container_name: te_prom
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alerts.yml:/etc/prometheus/alerts.yml:ro
     ports:
       - "9090:9090"
 
@@ -97,7 +104,6 @@ services:
       - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
       - ./monitoring/dashboards:/var/lib/grafana/dashboards
 
-
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.98.0
     container_name: te_otel
@@ -106,7 +112,7 @@ services:
       - ./monitoring/otel-collector.yml:/etc/otel-collector.yml:ro
     ports:
       - "4317:4317"
-  
+
   redpanda:
     image: redpandadata/redpanda:v23.3.12
     container_name: te_redpanda
@@ -154,7 +160,7 @@ services:
     working_dir: /app
     volumes:
       - ./:/app
-    entrypoint: ["bash","-lc","python -V && tail -f /dev/null"]
+    entrypoint: ["bash", "-lc", "python -V && tail -f /dev/null"]
 
 volumes:
   pgdata:
